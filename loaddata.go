@@ -50,30 +50,16 @@ func ActivateModel() {
 	createKeyspace("paris_open_data", session)
 
 	createTable("filming", "paris_open_data", session)
-	for i, record := range records {
-		if i == 10 {
-			break
-		}
+	for _, record := range records {
 		r := record.Tournage
-		value, err := json.MarshalIndent(record.Tournage, "", "\t")
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println(string(value))
 		query := "INSERT INTO paris_open_data.filming (id,name,producer,director,coord_x,coord_y,type,place_ardt,place_id,address,year) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-		fmt.Print("-")
-		err = session.Query(query, gocql.TimeUUID(), r.NomTournage, r.NomProducteur, r.NomRealisateur, r.CoordX, r.CoordY, r.TypeTournage, r.ArdtLieu, r.IDLieu, r.AdresseLieu, r.AnneeTournage).Exec()
+		err = session.Query(query, gocql.TimeUUID(), r.NomTournage, r.NomProducteur, r.NomRealisateur, r.CoordX, r.CoordY, r.TypeTournage, r.ArdtLieu, r.IDLieu, handleBadSpace(r.AdresseLieu), r.AnneeTournage).Exec()
 		errorHandle(err)
 	}
 
 }
 
-func errorHandle(err error) {
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-}
+
 
 func createKeyspace(keyspace string, session *gocql.Session) {
 	var query string = fmt.Sprintf("CREATE KEYSPACE IF NOT EXISTS %s WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor' : 2}", keyspace)
