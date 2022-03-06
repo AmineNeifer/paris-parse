@@ -12,7 +12,7 @@ func errorHandle(err error) {
 	}
 }
 
-func handleBadSpace(s string) string {
+func badSpaceHandle(s string) string {
 	var bad_space byte = 160
 	return strings.ReplaceAll(s, string(bad_space), "")
 }
