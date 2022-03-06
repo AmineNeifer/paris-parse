@@ -57,7 +57,7 @@ func activateModel() {
 }
 
 func createKeyspace(keyspace string, session *gocql.Session) {
-	var query string = fmt.Sprintf("CREATE KEYSPACE IF NOT EXISTS %s"+
+	query := fmt.Sprintf("CREATE KEYSPACE IF NOT EXISTS %s"+
 	" WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor' : 2}", keyspace)
 	err := session.Query(query).Exec()
 	errorHandle(err)
@@ -81,6 +81,7 @@ func deleteAllRows(table string, keyspace string, session *gocql.Session) {
 }
 
 func storeRecords(keyspace string, table string, session *gocql.Session, records []models.Tournage) {
+	// remove all rows to make sure there are no duplicates with different IDs
 	deleteAllRows(table, keyspace, session)
 	for _, record := range records {
 		r := record.Filming

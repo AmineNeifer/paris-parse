@@ -19,5 +19,7 @@ func main() {
 	} else {
 		fmt.Println("Great! no unnecessary stuff!")
 	}
-
+	// next step is gocqlx
+	// after that gin
+	// after configurations, integrate normal CRUD operations
 }
