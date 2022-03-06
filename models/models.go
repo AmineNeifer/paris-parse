@@ -3,10 +3,10 @@ package models
 import "github.com/gocql/gocql"
 
 type Response struct {
-	Records []struct {
-		Tournage Fields `json:"fields"`
-	}
+	Records []Tournage
 }
+
+type Tournage struct {Filming Fields "json:\"fields\""}
 
 type Fields struct {
 	ID             gocql.UUID `json:"id" cql:"id"`

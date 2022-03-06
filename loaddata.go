@@ -12,6 +12,7 @@ import (
 	"github.com/gocql/gocql"
 )
 
+
 func getHTTPResponse(url string) models.Response {
 	get, err := http.Get(url)
 	if err != nil {
@@ -63,7 +64,7 @@ func createKeyspace(keyspace string, session *gocql.Session) {
 }
 
 func createTable(table string, keyspace string, session *gocql.Session) {
-	var query string = fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s.%s"+ 
+	query := fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s.%s"+ 
 	" (id timeuuid PRIMARY KEY, name text, producer text, director text,"+
 	" coord_x double, coord_y double, type text, place_ardt int, place_id text,"+
 	" address text, year int)", keyspace, table)
@@ -73,11 +74,16 @@ func createTable(table string, keyspace string, session *gocql.Session) {
 	errorHandle(err)
 }
 
-func storeRecords(keyspace string, table string, session *gocql.Session, records []struct {
-	Tournage models.Fields "json:\"fields\""
-}) {
+func deleteAllRows(table string, keyspace string, session *gocql.Session) {
+	query := fmt.Sprintf("TRUNCATE %s.%s", keyspace, table)
+	err := session.Query(query).Exec()
+	errorHandle(err)
+}
+
+func storeRecords(keyspace string, table string, session *gocql.Session, records []models.Tournage) {
+	deleteAllRows(table, keyspace, session)
 	for _, record := range records {
-		r := record.Tournage
+		r := record.Filming
 		query := fmt.Sprintf("INSERT INTO %s.%s"+
 			" (id,name,producer,director,coord_x,coord_y,type,place_ardt,place_id,address,year)"+
 			" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", keyspace, table)
